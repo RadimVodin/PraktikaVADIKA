@@ -38,7 +38,8 @@ public sealed class MenuRunner
                         (7, () => new Task07_StringReverse()),
                         (8, () => new Task08_FizzBuzz()),
                         (9, () => new Task09_ArrayStats()),
-                        (10, () => new Task10_Sorting()), // <--- Добавлено задание 10
+                        (10, () => new Task10_Sorting()),
+                        (11, () => new Task11_MatrixDiagonal()), // <--- Добавлено задание 11
                     }).Show();
                     break;
 
