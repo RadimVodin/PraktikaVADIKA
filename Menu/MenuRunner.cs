@@ -3,6 +3,9 @@ using CSharpPracticum.Tasks.Level1;
 
 namespace CSharpPracticum.Menu;
 
+/// <summary>
+/// Главное меню.
+/// </summary>
 public sealed class MenuRunner
 {
     public void Run()
@@ -27,6 +30,19 @@ public sealed class MenuRunner
                     new LevelMenu("Уровень 1: Базовый", new (int, Func<ITask>)[]
                     {
                         (1, () => new Task01_HelloWorld()),
+                        (2, () => new Task02_Primitives()),
+                        (3, () => new Task03_Calculator()),
+                        (4, () => new Task04_ParityCheck()),
+                        (5, () => new Task05_MultiplicationTable()),
+                        (6, () => new Task06_DigitSum()),
+                        (7, () => new Task07_StringReverse()),
+                        (8, () => new Task08_FizzBuzz()),
+                        (9, () => new Task09_ArrayStats()),
+                        (10, () => new Task10_Sorting()),
+                        (11, () => new Task11_MatrixDiagonal()),
+                        (12, () => new Task12_Palindrome()),
+                        (13, () => new Task13_WordCount()),
+                        (14, () => new Task14_AgeCalculator()), // <--- Добавлено задание 14
                     }).Show();
                     break;
 
