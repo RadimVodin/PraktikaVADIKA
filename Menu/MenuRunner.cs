@@ -41,7 +41,8 @@ public sealed class MenuRunner
                         (10, () => new Task10_Sorting()),
                         (11, () => new Task11_MatrixDiagonal()),
                         (12, () => new Task12_Palindrome()),
-                        (13, () => new Task13_WordCount()), // <--- Добавлено задание 13
+                        (13, () => new Task13_WordCount()),
+                        (14, () => new Task14_AgeCalculator()), // <--- Добавлено задание 14
                     }).Show();
                     break;
 
