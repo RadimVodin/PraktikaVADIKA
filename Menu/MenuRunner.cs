@@ -30,7 +30,8 @@ public sealed class MenuRunner
                     new LevelMenu("Уровень 1: Базовый", new (int, Func<ITask>)[]
                     {
                         (1, () => new Task01_HelloWorld()),
-                        (2, () => new Task02_Primitives()), // <--- Добавлено задание 2
+                        (2, () => new Task02_Primitives()),
+                        (3, () => new Task03_Calculator()), // <--- Добавлено 3 задание
                     }).Show();
                     break;
 
