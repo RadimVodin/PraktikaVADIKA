@@ -40,7 +40,8 @@ public sealed class MenuRunner
                         (9, () => new Task09_ArrayStats()),
                         (10, () => new Task10_Sorting()),
                         (11, () => new Task11_MatrixDiagonal()),
-                        (12, () => new Task12_Palindrome()), // <--- Добавлено задание 12
+                        (12, () => new Task12_Palindrome()),
+                        (13, () => new Task13_WordCount()), // <--- Добавлено задание 13
                     }).Show();
                     break;
 
