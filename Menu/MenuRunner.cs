@@ -31,7 +31,8 @@ public sealed class MenuRunner
                     {
                         (1, () => new Task01_HelloWorld()),
                         (2, () => new Task02_Primitives()),
-                        (3, () => new Task03_Calculator()), // <--- Добавлено 3 задание
+                        (3, () => new Task03_Calculator()),
+                        (4, () => new Task04_ParityCheck()), // <--- Добавлено задание 4
                     }).Show();
                     break;
 
