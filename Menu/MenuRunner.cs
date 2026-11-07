@@ -35,7 +35,8 @@ public sealed class MenuRunner
                         (4, () => new Task04_ParityCheck()),
                         (5, () => new Task05_MultiplicationTable()),
                         (6, () => new Task06_DigitSum()),
-                        (7, () => new Task07_StringReverse()), // <--- Добавлено задание 7
+                        (7, () => new Task07_StringReverse()),
+                        (8, () => new Task08_FizzBuzz()), // <--- Добавлено задание 8
                     }).Show();
                     break;
 
