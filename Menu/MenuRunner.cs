@@ -66,7 +66,8 @@ public sealed class MenuRunner
                         (29, () => new Task29_FactoryNotification()),
                         (30, () => new Task30_BankAccount()),
                         (31, () => new Task31_DisposableFileWriter()),
-                        (32, () => new Task32_TemperatureValidation()), // <--- Добавлено задание 32
+                        (32, () => new Task32_TemperatureValidation()),
+                        (33, () => new Task33_LinqEmployees()), // <--- Добавлено задание 33
                     }).Show();
                     break;
 
