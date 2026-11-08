@@ -51,6 +51,7 @@ public sealed class MenuRunner
                     new LevelMenu("Уровень 2: Средний", new (int, Func<ITask>)[]
                     {
                         (16, () => new Task16_StringExtensions()),
+                        (17, () => new Task17_StringBuilderVsConcat()), // <--- Добавлено задание 17
                     }).Show();
                     break;
 
