@@ -58,7 +58,8 @@ public sealed class MenuRunner
                         (21, () => new Task21_EnumDays()),
                         (22, () => new Task22_ParamsOverload()),
                         (23, () => new Task23_NullableTypes()),
-                        (24, () => new Task24_AnimalHierarchy()), // <--- Добавлено задание 24
+                        (24, () => new Task24_AnimalHierarchy()),
+                        (25, () => new Task25_Shapes()), // <--- Добавлено задание 25
                     }).Show();
                     break;
 
