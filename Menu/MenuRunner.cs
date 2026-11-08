@@ -1,5 +1,6 @@
 ﻿using CSharpPracticum.Common;
 using CSharpPracticum.Tasks.Level1;
+using CSharpPracticum.Tasks.Level2;
 
 namespace CSharpPracticum.Menu;
 
@@ -42,12 +43,33 @@ public sealed class MenuRunner
                         (11, () => new Task11_MatrixDiagonal()),
                         (12, () => new Task12_Palindrome()),
                         (13, () => new Task13_WordCount()),
-                        (14, () => new Task14_AgeCalculator()), // <--- Добавлено задание 14
+                        (14, () => new Task14_AgeCalculator()),
                     }).Show();
                     break;
 
                 case "2":
-                    Console.WriteLine("Уровень 2 пока не реализован.");
+                    new LevelMenu("Уровень 2: Средний", new (int, Func<ITask>)[]
+                    {
+                        (16, () => new Task16_StringExtensions()),
+                        (17, () => new Task17_StringBuilderVsConcat()),
+                        (18, () => new Task18_TryParseVsTryCatch()),
+                        (19, () => new Task19_MyStackQueue()),
+                        (20, () => new Task20_Generics()),
+                        (21, () => new Task21_EnumDays()),
+                        (22, () => new Task22_ParamsOverload()),
+                        (23, () => new Task23_NullableTypes()),
+                        (24, () => new Task24_AnimalHierarchy()),
+                        (25, () => new Task25_Shapes()),
+                        (26, () => new Task26_StrategyDiscount()),
+                        (27, () => new Task27_StudentSorting()),
+                        (28, () => new Task28_PointEquals()),
+                        (29, () => new Task29_FactoryNotification()),
+                        (30, () => new Task30_BankAccount()),
+                        (31, () => new Task31_DisposableFileWriter()),
+                        (32, () => new Task32_TemperatureValidation()),
+                        (33, () => new Task33_LinqEmployees()),
+                        (34, () => new Task34_LinqWordGroups()), // <--- Добавлено задание 34
+                    }).Show();
                     break;
 
                 case "3":
