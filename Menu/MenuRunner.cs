@@ -64,7 +64,8 @@ public sealed class MenuRunner
                         (27, () => new Task27_StudentSorting()),
                         (28, () => new Task28_PointEquals()),
                         (29, () => new Task29_FactoryNotification()),
-                        (30, () => new Task30_BankAccount()), // <--- Добавлено задание 30
+                        (30, () => new Task30_BankAccount()),
+                        (31, () => new Task31_DisposableFileWriter()), // <--- Добавлено задание 31
                     }).Show();
                     break;
 
