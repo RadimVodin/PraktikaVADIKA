@@ -55,7 +55,8 @@ public sealed class MenuRunner
                         (18, () => new Task18_TryParseVsTryCatch()),
                         (19, () => new Task19_MyStackQueue()),
                         (20, () => new Task20_Generics()),
-                        (21, () => new Task21_EnumDays()), // <--- Добавлено задание 21
+                        (21, () => new Task21_EnumDays()),
+                        (22, () => new Task22_ParamsOverload()), // <--- Добавлено задание 22
                     }).Show();
                     break;
 
