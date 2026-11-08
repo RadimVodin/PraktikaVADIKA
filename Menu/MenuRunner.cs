@@ -53,7 +53,8 @@ public sealed class MenuRunner
                         (16, () => new Task16_StringExtensions()),
                         (17, () => new Task17_StringBuilderVsConcat()),
                         (18, () => new Task18_TryParseVsTryCatch()),
-                        (19, () => new Task19_MyStackQueue()), // <--- Добавлено задание 19
+                        (19, () => new Task19_MyStackQueue()),
+                        (20, () => new Task20_Generics()), // <--- Добавлено задание 20
                     }).Show();
                     break;
 
