@@ -60,7 +60,8 @@ public sealed class MenuRunner
                         (23, () => new Task23_NullableTypes()),
                         (24, () => new Task24_AnimalHierarchy()),
                         (25, () => new Task25_Shapes()),
-                        (26, () => new Task26_StrategyDiscount()), // <--- Добавлено задание 26
+                        (26, () => new Task26_StrategyDiscount()),
+                        (27, () => new Task27_StudentSorting()), // <--- Добавлено задание 27
                     }).Show();
                     break;
 
