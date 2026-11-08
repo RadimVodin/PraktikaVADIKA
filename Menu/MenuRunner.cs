@@ -1,5 +1,6 @@
 ﻿using CSharpPracticum.Common;
 using CSharpPracticum.Tasks.Level1;
+using CSharpPracticum.Tasks.Level2;
 
 namespace CSharpPracticum.Menu;
 
@@ -42,12 +43,15 @@ public sealed class MenuRunner
                         (11, () => new Task11_MatrixDiagonal()),
                         (12, () => new Task12_Palindrome()),
                         (13, () => new Task13_WordCount()),
-                        (14, () => new Task14_AgeCalculator()), // <--- Добавлено задание 14
+                        (14, () => new Task14_AgeCalculator()),
                     }).Show();
                     break;
 
                 case "2":
-                    Console.WriteLine("Уровень 2 пока не реализован.");
+                    new LevelMenu("Уровень 2: Средний", new (int, Func<ITask>)[]
+                    {
+                        (16, () => new Task16_StringExtensions()),
+                    }).Show();
                     break;
 
                 case "3":
