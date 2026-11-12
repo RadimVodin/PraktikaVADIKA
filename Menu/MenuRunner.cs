@@ -73,7 +73,8 @@ public sealed class MenuRunner
                 case "3":
                     new LevelMenu("Уровень 3: Продвинутый", new (int, Func<ITask>)[]
                     {
-                        (36, () => new Task36_Duplicates()), // <--- Добавлено задание 36
+                        (36, () => new Task36_Duplicates()),
+                        (37, () => new Task37_Memoization()), // <--- Добавлено задание 37
                     }).Show();
                     break;
 
