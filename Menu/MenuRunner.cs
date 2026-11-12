@@ -1,12 +1,10 @@
-﻿using CSharpPracticum.Common;
+using CSharpPracticum.Common;
 using CSharpPracticum.Tasks.Level1;
 using CSharpPracticum.Tasks.Level2;
+using CSharpPracticum.Tasks.Level3;
 
 namespace CSharpPracticum.Menu;
 
-/// <summary>
-/// Главное меню.
-/// </summary>
 public sealed class MenuRunner
 {
     public void Run()
@@ -68,12 +66,15 @@ public sealed class MenuRunner
                         (31, () => new Task31_DisposableFileWriter()),
                         (32, () => new Task32_TemperatureValidation()),
                         (33, () => new Task33_LinqEmployees()),
-                        (34, () => new Task34_LinqWordGroups()), // <--- Добавлено задание 34
+                        (34, () => new Task34_LinqWordGroups()),
                     }).Show();
                     break;
 
                 case "3":
-                    Console.WriteLine("Уровень 3 пока не реализован.");
+                    new LevelMenu("Уровень 3: Продвинутый", new (int, Func<ITask>)[]
+                    {
+                        (36, () => new Task36_Duplicates()), // <--- Добавлено задание 36
+                    }).Show();
                     break;
 
                 default:
