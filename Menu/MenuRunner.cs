@@ -78,7 +78,8 @@ public sealed class MenuRunner
                         (38, () => new Task38_ListVsLinkedList()),
                         (39, () => new Task39_YieldGenerator()),
                         (40, () => new Task40_AsyncAwait()),
-                        (41, () => new Task41_WhenAll()), // <--- Добавлено задание 41
+                        (41, () => new Task41_WhenAll()),
+                        (42, () => new Task42_Cancellation()), // <--- Добавлено задание 42
                     }).Show();
                     break;
 
