@@ -81,7 +81,8 @@ public sealed class MenuRunner
                         (41, () => new Task41_WhenAll()),
                         (42, () => new Task42_Cancellation()),
                         (43, () => new Task43_MultipleExceptions()),
-                        (44, () => new Task44_TodoList()), // <--- Добавлено задание 44
+                        (44, () => new Task44_TodoList()),
+                        (45, () => new Task45_Library()), // <--- Добавлено задание 45
                     }).Show();
                     break;
 
