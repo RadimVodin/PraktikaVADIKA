@@ -80,7 +80,8 @@ public sealed class MenuRunner
                         (40, () => new Task40_AsyncAwait()),
                         (41, () => new Task41_WhenAll()),
                         (42, () => new Task42_Cancellation()),
-                        (43, () => new Task43_MultipleExceptions()), // <--- Добавлено задание 43
+                        (43, () => new Task43_MultipleExceptions()),
+                        (44, () => new Task44_TodoList()), // <--- Добавлено задание 44
                     }).Show();
                     break;
 
