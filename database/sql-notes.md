@@ -304,10 +304,11 @@ BEGIN TRANSACTION;
 UPDATE Employees SET Salary = 70000 WHERE EmployeeId = 1;
 COMMIT TRANSACTION;
 SELECT Salary FROM Employees WHERE EmployeeId = 1;
-Результат:
-После ROLLBACK зарплата вернулась к 65000, после COMMIT — сохранилась на 70000.
-Вывод:
-Транзакции гарантируют целостность данных: ROLLBACK отменяет изменения, COMMIT фиксирует их навсегда.
+Результат
+При выполнении `ROLLBACK TRANSACTION` изменение зарплаты откатилось: до отката `SELECT` показал 999999.00, после отката снова 65000.00. 
+При выполнении `COMMIT TRANSACTION` изменение сохранилось: зарплата стала 70000.00 и осталась такой после завершения транзакции.
+ Вывод
+ROLLBACK отменяет изменения, COMMIT фиксирует их.
 
 ##Task 19: Представления (VIEW)
 IF OBJECT_ID('vw_EmployeeDetails', 'V') IS NOT NULL
@@ -344,3 +345,150 @@ SELECT * FROM Employees WHERE DepartmentId = 1 AND Salary > 50000;
 После создания индексов logical reads в панели "Сообщения" уменьшилось (например, с 3 до 2)
 Вывод:
 Индексы ускоряют поиск по колонкам из WHERE за счет создания дополнительной структуры (дерева), но замедляют INSERT/UPDATE (так как индексы надо перестраивать)
+
+## Task 21: Хранимые процедуры
+
+### SQL
+
+```sql
+-- 1. Простая процедура
+CREATE PROCEDURE sp_GetEmployeesByDepartment 
+    @DeptId INT
+AS
+BEGIN
+    SELECT EmployeeName, Salary 
+    FROM Employees 
+    WHERE DepartmentId = @DeptId;
+END;
+GO
+
+-- Вызов:
+EXEC sp_GetEmployeesByDepartment @DeptId = 1;
+
+-- 2. Процедура с OUTPUT
+CREATE PROCEDURE sp_GetAvgSalaryByDepartment
+    @DeptId INT,
+    @AvgSalary DECIMAL(10,2) OUTPUT
+AS
+BEGIN
+    SELECT @AvgSalary = AVG(Salary) 
+    FROM Employees 
+    WHERE DepartmentId = @DeptId;
+END;
+GO
+
+-- Вызов с OUTPUT:
+DECLARE @Avg DECIMAL(10,2);
+EXEC sp_GetAvgSalaryByDepartment @DeptId = 1, @AvgSalary = @Avg OUTPUT;
+SELECT @Avg AS DepartmentAvgSalary;
+Результат:
+Первая процедура вывела 4 сотрудников отдела 1 (Иванова, Сидоров, Кузнецова, Петров). Вторая процедура через OUTPUT вернула среднюю зарплату по отделу 1 = 60000.00.
+Вывод:
+Хранимые процедуры позволяют сохранять SQL-код на сервере. Параметры OUTPUT удобны для возврата одного значения (например, агрегата) без вывода целой таблицы.
+
+##Task 22: Функции: скалярная и табличная
+-- 1. Скалярная функция
+CREATE FUNCTION fn_GetAnnualSalary (@MonthlySalary DECIMAL(10,2))
+RETURNS DECIMAL(10,2)
+AS
+BEGIN
+    RETURN @MonthlySalary * 12;
+END;
+GO
+
+SELECT EmployeeName, Salary, dbo.fn_GetAnnualSalary(Salary) AS AnnualSalary
+FROM Employees;
+
+-- 2. Табличная функция
+CREATE FUNCTION fn_GetEmployeesBySalaryRange (@Min DECIMAL(10,2), @Max DECIMAL(10,2))
+RETURNS TABLE
+AS
+RETURN
+(
+    SELECT EmployeeName, Salary 
+    FROM Employees 
+    WHERE Salary BETWEEN @Min AND @Max
+);
+GO
+
+SELECT * FROM dbo.fn_GetEmployeesBySalaryRange(50000, 70000);
+Результат:
+Скалярная функция умножила зарплату на 12. Табличная функция вернула список сотрудников с зарплатой от 50000 до 70000 (Иванова, Кузнецова, Смирнова, Орлов, Волкова)
+Вывод:
+Скалярные функции возвращают одно значение и вызываются в SELECT. Табличные возвращают таблицу и вызываются в FROM как обычные таблицы.
+
+##Task 23: Оконные функции
+SELECT 
+    EmployeeName, 
+    DepartmentId, 
+    Salary,
+    ROW_NUMBER() OVER(ORDER BY Salary DESC) AS RowNum,
+    RANK() OVER(PARTITION BY DepartmentId ORDER BY Salary DESC) AS RankInDept,
+    DENSE_RANK() OVER(PARTITION BY DepartmentId ORDER BY Salary DESC) AS DenseRankInDept
+FROM Employees;
+Результат:
+Ранги расставлены корректно. ROW_NUMBER нумерует строки подряд (1, 2, 3...). RANK и DENSE_RANK ведут себя одинаково, так как в базе нет сотрудников с одинаковой зарплатой в одном отделе. Если бы они были, RANK пропустил бы цифру, а DENSE_RANK — нет.
+Вывод:
+Оконные функции считают значения, не сворачивая строки в группы (в отличие от GROUP BY). PARTITION BY делит данные на окна (отделы).
+
+##Task 24: Оконные агрегаты
+SELECT 
+    EmployeeName, 
+    DepartmentId, 
+    Salary,
+    SUM(Salary) OVER(PARTITION BY DepartmentId) AS TotalDeptSalary,
+    AVG(Salary) OVER(PARTITION BY DepartmentId) AS AvgDeptSalary,
+    Salary - AVG(Salary) OVER(PARTITION BY DepartmentId) AS DiffFromAvg
+FROM Employees;
+Результат:
+Для каждого сотрудника выведена сумма и средняя зарплата по его отделу, а также отклонение от средней. Например, у Ивановой (60000) отклонение +5000 от средней по отделу (55000).
+Вывод:
+Оконные агрегаты (OVER) избавляют от необходимости писать сложные подзапросы с GROUP BY, позволяя сразу выводить и строки, и итоги.
+
+##Task 25: CTE (Common Table Expressions)
+;WITH AvgSalary AS (
+    SELECT AVG(Salary) AS CompanyAvg FROM Employees
+)
+SELECT EmployeeName, Salary 
+FROM Employees
+CROSS JOIN AvgSalary
+WHERE Employees.Salary > AvgSalary.CompanyAvg;
+Результат:
+Запрос вернул тех же сотрудников, что и в Task 12 (зарплата выше 58900). CROSS JOIN присоединил к каждой строке вычисленную среднюю.
+Вывод:
+CTE (WITH) читается сверху вниз, что делает сложные запросы более понятными. Это отличная альтернатива вложенным подзапросам.
+
+##Task 26: CASE
+SELECT 
+    EmployeeName, 
+    Salary,
+    CASE 
+        WHEN Salary > 60000 THEN 'High'
+        WHEN Salary BETWEEN 40000 AND 60000 THEN 'Medium'
+        ELSE 'Low'
+    END AS SalaryLevel,
+    HireDate,
+    CASE
+        WHEN HireDate < '2020-01-01' THEN 'Senior'
+        WHEN HireDate BETWEEN '2020-01-01' AND '2022-12-31' THEN 'Mid'
+        ELSE 'Junior'
+    END AS Tenure
+FROM Employees;
+Результат:
+Каждому сотруднику присвоен уровень зарплаты и стажа. Например, Лебедев (90000) — High, Senior. Соколова (43000) — Medium, Junior.
+Вывод:
+CASE работает как if-else. Он позволяет создавать вычисляемые колонки и заменять сложные JOIN с справочниками.
+
+##Task 27: Работа с датами
+SELECT 
+    EmployeeName, 
+    HireDate,
+    DATEDIFF(YEAR, HireDate, GETDATE()) AS YearsOfService,
+    DATEDIFF(MONTH, HireDate, GETDATE()) AS MonthsOfService,
+    DATEADD(YEAR, 1, HireDate) AS OneYearAfterHire,
+    FORMAT(HireDate, 'dd.MM.yyyy') AS FormattedDate
+FROM Employees;
+Результат:
+Для каждого сотрудника вычислен полный стаж в годах и месяцах, выведена дата через год после найма и отформатирована дата в вид дд.ММ.гггг.
+Вывод:
+DATEDIFF считает разницу между датами, DATEADD прибавляет интервал, FORMAT приводит дату к строке в нужном формате. Это стандартный набор для работы с датами в T-SQL.
