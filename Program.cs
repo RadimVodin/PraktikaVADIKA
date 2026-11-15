@@ -4,15 +4,14 @@ using System.Threading.Tasks;
 
 class Program
 {
-    // Вставляем твою строку подключения напрямую
+    
     private static string connectionString = "Server=localhost\\SQLEXPRESS;Database=PracticeDB;Trusted_Connection=True;TrustServerCertificate=True;";
 
     static async Task Main(string[] args)
     {
         Console.WriteLine("--- Задание 28: C# + SQL SELECT ---");
 
-        // По заданию строка должна быть из переменной окружения, 
-        // поэтому мы пробуем ее взять, а если ее нет — используем ту, что выше.
+        
         string envString = Environment.GetEnvironmentVariable("PRACTICE_DB_CONNECTION");
         if (!string.IsNullOrEmpty(envString))
         {
