@@ -184,3 +184,163 @@ ORDER BY d.DepartmentName ASC, e.EmployeeName ASC, p.ProjectName ASC;
 14 строк с назначениями (сотрудник, отдел, проект, часы).
 Вывод:
 Соединил 4 таблицы через цепочку INNER JOIN. Это позволяет получить полную картину из связанных данных.
+
+## Task 11: Self-join: иерархия руководителей
+
+### SQL
+
+```sql
+SELECT 
+    e.EmployeeName AS Employee, 
+    m.EmployeeName AS Manager
+FROM Employees e
+LEFT JOIN Employees m ON e.ManagerId = m.EmployeeId
+ORDER BY e.EmployeeId;
+Результат:
+Выведены все 10 сотрудников. У Анны, Петра и Алексея руководитель NULL, у остальных указаны имена менеджеров.
+Вывод:
+Освоил Self-join: таблица соединяется сама с собой, чтобы получить данные о руководителе из той же таблицы.
+
+##Task 12: Подзапросы в WHERE
+-- Выше средней
+SELECT EmployeeName, Salary 
+FROM Employees 
+WHERE Salary > (SELECT AVG(Salary) FROM Employees);
+-- С максимальной зарплатой
+SELECT EmployeeName, Salary 
+FROM Employees 
+WHERE Salary = (SELECT MAX(Salary) FROM Employees);
+Результат:
+1.Выведены сотрудники с зарплатой выше 58900.
+2.Выведен Алексей Лебедев (90000)
+Вывод:
+Подзапросы в WHERE позволяют динамически вычислять условие (например, среднюю зарплату) без хардкода чисел.
+
+##Task 13: Скалярные подзапросы в SELECT
+SELECT 
+    e.EmployeeName, 
+    e.Salary, 
+    e.DepartmentId,
+    ROUND(e.Salary - (SELECT AVG(sub.Salary) FROM Employees sub WHERE sub.DepartmentId = e.DepartmentId), 2) AS DiffFromDeptAvg
+FROM Employees e;
+Результат:
+Для каждого сотрудника показана разница между его зарплатой и средней по его отделу. Например, у Лебедева разница 0 (он один в отделе), у Ивановой +5000.
+Вывод:
+Скалярный подзапрос в SELECT выполняется для каждой строки основного запроса, что позволяет вычислять аналитику по группам.
+
+##Task 14: EXISTS / NOT EXISTS
+-- Есть проекты
+SELECT e.EmployeeName 
+FROM Employees e
+WHERE EXISTS (SELECT 1 FROM EmployeeProjects ep WHERE ep.EmployeeId = e.EmployeeId);
+
+-- Нет проектов
+SELECT e.EmployeeName 
+FROM Employees e
+WHERE NOT EXISTS (SELECT 1 FROM EmployeeProjects ep WHERE ep.EmployeeId = e.EmployeeId);
+Результат:
+1.Выведены все, у кого есть назначения.
+2.Выведены Волкова и Соколова.
+Вывод:
+EXISTS эффективнее JOIN для проверки наличия связей, так как останавливается при первом совпадении.
+
+##Task 15: UNION / UNION ALL
+-- UNION
+SELECT EmployeeName, Salary, HireDate FROM Employees WHERE Salary > 60000
+UNION
+SELECT EmployeeName, Salary, HireDate FROM Employees WHERE HireDate < '2022-01-01';
+
+-- UNION ALL
+SELECT EmployeeName, Salary, HireDate FROM Employees WHERE Salary > 60000
+UNION ALL
+SELECT EmployeeName, Salary, HireDate FROM Employees WHERE HireDate < '2022-01-01';
+Результат:
+UNION вернул уникальные строки (без дубликатов), UNION ALL вернул строк больше, так как сотрудники, подходящие под оба условия, задвоились.
+Вывод:
+UNION тратит ресурсы на удаление дубликатов, UNION ALL работает быстрее и сохраняет все строки.
+
+##Task 16: UPDATE
+-- ДО
+SELECT EmployeeId, EmployeeName, Salary FROM Employees WHERE DepartmentId = 1;
+
+-- Обновление
+UPDATE Employees SET Salary = Salary * 1.10 WHERE DepartmentId = 1;
+UPDATE Employees SET Salary = Salary + 5000 WHERE HireDate < '2022-01-01';
+
+-- ПОСЛЕ
+SELECT EmployeeId, EmployeeName, Salary FROM Employees WHERE DepartmentId = 1;
+Результат:
+Зарплата сотрудников отдела 1 увеличилась на 10%, а у нанятых до 2022 года — на 5000.
+Вывод:
+UPDATE с WHERE изменяет только целевые строки. Обязательно делать SELECT до и после для проверки.
+
+##Task 17: DELETE
+-- Удаление связей с 0 часов
+DELETE FROM EmployeeProjects WHERE Hours = 0;
+
+-- Удаление связей сотрудника 4
+DELETE FROM EmployeeProjects WHERE EmployeeId = 4;
+
+-- Удаление самого сотрудника
+DELETE FROM Employees WHERE EmployeeId = 4;
+
+-- Проверка
+SELECT * FROM Employees WHERE EmployeeId = 4;
+Результат:
+Сотрудник 4 удален. Связи также удалены, ошибка внешнего ключа (FK) не возникла.
+Вывод:
+При удалении родительской записи сначала нужно удалять дочерние (связи), чтобы не нарушать ограничение FOREIGN KEY.
+
+##Task 18: Транзакции
+-- ROLLBACK
+BEGIN TRANSACTION;
+UPDATE Employees SET Salary = 999999 WHERE EmployeeId = 1;
+SELECT Salary FROM Employees WHERE EmployeeId = 1;
+ROLLBACK TRANSACTION;
+SELECT Salary FROM Employees WHERE EmployeeId = 1;
+
+-- COMMIT
+BEGIN TRANSACTION;
+UPDATE Employees SET Salary = 70000 WHERE EmployeeId = 1;
+COMMIT TRANSACTION;
+SELECT Salary FROM Employees WHERE EmployeeId = 1;
+Результат:
+После ROLLBACK зарплата вернулась к 65000, после COMMIT — сохранилась на 70000.
+Вывод:
+Транзакции гарантируют целостность данных: ROLLBACK отменяет изменения, COMMIT фиксирует их навсегда.
+
+##Task 19: Представления (VIEW)
+IF OBJECT_ID('vw_EmployeeDetails', 'V') IS NOT NULL
+    DROP VIEW vw_EmployeeDetails;
+GO
+
+CREATE VIEW vw_EmployeeDetails AS
+SELECT e.EmployeeName, d.DepartmentName, p.ProjectName, ep.Hours
+FROM Employees e
+INNER JOIN Departments d ON e.DepartmentId = d.DepartmentId
+INNER JOIN EmployeeProjects ep ON e.EmployeeId = ep.EmployeeId
+INNER JOIN Projects p ON ep.ProjectId = p.ProjectId;
+GO
+
+SELECT * FROM vw_EmployeeDetails;
+Результат:
+SELECT * FROM vw_EmployeeDetails вернул 14 строк (как в Task 10).
+Вывод:
+VIEW — это сохраненный запрос. Он не хранит данные, а каждый раз выполняет SELECT заново.
+
+##Task 20: Индексы
+SET STATISTICS IO ON;
+
+-- ДО
+SELECT * FROM Employees WHERE DepartmentId = 1 AND Salary > 50000;
+
+-- Создание
+CREATE INDEX IX_Employees_DepartmentId ON Employees(DepartmentId);
+CREATE INDEX IX_Employees_Salary ON Employees(Salary);
+
+-- ПОСЛЕ
+SELECT * FROM Employees WHERE DepartmentId = 1 AND Salary > 50000;
+Результат:
+После создания индексов logical reads в панели "Сообщения" уменьшилось (например, с 3 до 2)
+Вывод:
+Индексы ускоряют поиск по колонкам из WHERE за счет создания дополнительной структуры (дерева), но замедляют INSERT/UPDATE (так как индексы надо перестраивать)
